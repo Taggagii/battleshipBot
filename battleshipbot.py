@@ -3,11 +3,7 @@ import numpy as np
 class BattleshipBot:
     def __init__(self, boardSideLength, ships):
         self.boardSideLength = boardSideLength
-        self.type = "standard"
         self.board = self.createZeroBoard()
-
-        self.VERTICAL = 1
-        self.HORIZONTAL = 0
 
         self.shipSizes = np.array(ships)
         self.largestShip = max(self.shipSizes)
@@ -36,7 +32,6 @@ class BattleshipBot:
         self.board[y][x] = -1
         
     def addSunk(self, x, y):        
-        print('original sink', x, y)
         sunkenBefore = self.sunkenCells
         self.recursiveSinker(x, y)
         sunkenAfter = self.sunkenCells
@@ -49,11 +44,9 @@ class BattleshipBot:
         
 
     def recursiveSinker(self, x, y):
-        print("trying to sink", x, y)
         # sink the current square
         self.board[y][x] = 2
         self.sunkenCells += 1
-        
 
         # check all squares around it
         # sink squares that are hit and miss squares that are unknown
@@ -103,22 +96,16 @@ class BattleshipBot:
                 for x in range(self.boardSideLength):
                     # horizontal
                     hitSection = self.board[y, x : x + numberOfHits]
-                    print("horizontal", x, y, hitSection)
                     
                     if np.all(hitSection == 1):
-                        print('increasing horizontal', x + numberOfHits, y, x - 1, y)
-
                         # found row of hits, add prob 1 to each end
                         self.increase(probBoard, x + numberOfHits, y, 1)
                         self.increase(probBoard, x - 1, y, 1)
 
                     # vertical
                     hitSection = self.board[y : y + numberOfHits, x]
-                    print('vertical', x, y, hitSection)
-
 
                     if np.all(hitSection == 1):
-                        print('increasing vertical', x, y + numberOfHits, x, y - 1)
                         # found row of hits, add prob 1 to each end
                         self.increase(probBoard, x, y + numberOfHits, 1)
                         self.increase(probBoard, x, y - 1, 1)
@@ -131,10 +118,6 @@ class BattleshipBot:
                         self.increase(probBoard, x - 1, y, 1)
                         self.increase(probBoard, x, y + 1, 1)
                         self.increase(probBoard, x, y - 1, 1)
-
-        print("before zeroing step")
-        print(probBoard)
-
 
         probBoard[self.board != 0] = 0
 
